@@ -16,7 +16,7 @@ public class UserRequestDto {
     private String allShop;
     private List<String> shopId;
     @NotBlank(message = "Ecategory is Required")
-    private String eCategory;
+    private String categories;
     private List<MultipartFile> images;
     private String brand;
     private String model;
