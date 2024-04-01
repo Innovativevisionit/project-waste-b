@@ -10,6 +10,7 @@ import com.sql.authentication.payload.response.LoginResponse;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +44,7 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest, HttpSession session) {
 
         System.out.println(loginRequest);
 
@@ -53,6 +54,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        session.setAttribute("user", userDetails);
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
