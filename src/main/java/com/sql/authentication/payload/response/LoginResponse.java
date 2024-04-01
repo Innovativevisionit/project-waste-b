@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class LoginResponse {
     private Long id;
-    private String username;
+    private String userName;
     private String email;
     private List<String> roles;
     private String accessToken;

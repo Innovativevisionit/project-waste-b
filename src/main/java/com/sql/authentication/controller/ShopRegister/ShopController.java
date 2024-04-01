@@ -11,20 +11,43 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/shop")
 public class ShopController {
     @Autowired private ShopService shopService;
     @PostMapping("/register")
-    public Object registerShop(@Valid @ModelAttribute ShopRegisterDto registration){
-        try{
-            return shopService.shopRegistration(registration);
-
-        }catch (Exception e){
+    public Object registerShop(
+            @RequestPart("shopName") String shopName,
+            @RequestPart("contactNo") String contactNo,
+            @RequestPart("location") String location,
+            @RequestPart("category") String category,
+            @RequestPart("recycleMethods") String recycleMethods,
+            @RequestPart("hazard") String hazard,
+            @RequestPart("website") String website,
+            @RequestPart("socialLink") String socialLink,
+            @RequestPart("images") MultipartFile[] images) {
+        try {
+            ShopRegisterDto shopDto = new ShopRegisterDto();
+            shopDto.setShopName(shopName);
+            shopDto.setCategory(Collections.singleton(category));
+            shopDto.setLocation(location);
+            shopDto.setHandlingHazard(hazard);
+            shopDto.setRecyclingMethod(recycleMethods);
+            shopDto.setContactNo(contactNo);
+            shopDto.setWebsite(website);
+            shopDto.setSocialLink(socialLink);
+            shopDto.setFiles(Arrays.asList(images));
+            return shopService.shopRegistration(shopDto);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @GetMapping("requestList")
     public Object request(@RequestParam("status") String status){
         return shopService.registerRequest(status);

@@ -22,7 +22,7 @@ public class ShopRegisterDto {
     @NotEmpty(message = "Location is Required")
     private Set<String> category;
     private List<MultipartFile> files;
-    private int userId;
+    private Integer userId;
     @NotBlank(message = "Recycling Method is required")
     private String recyclingMethod;
     @NotBlank(message = "Handling Hazard is required")
