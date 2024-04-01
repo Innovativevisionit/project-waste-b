@@ -57,9 +57,10 @@ public class ShopServiceImpl implements ShopService {
                     .orElseThrow(() -> new RuntimeException(category+ "is not found."));
             ecategorySet.add(ecategory);
         });
+
         shopRegistration.setShopName(data.getShopName());
         shopRegistration.setContactNo(Long.parseLong(data.getContactNo()));
-        shopRegistration.setProofFile(proofFiles);
+        shopRegistration.setImages(proofFiles);
         shopRegistration.setUserId(user);
         shopRegistration.setEcategories(ecategorySet);
         shopRegistration.setLocation(data.getLocation());
@@ -104,7 +105,7 @@ public class ShopServiceImpl implements ShopService {
 //        return "SH" + String.format("%05d", nextNumericPart);
         return  "Hello";
     }
-    public List<Shop> shopList(){
-        return shopRepository.findAllOrderByLocation("Coimbatore");
+    public List<ShopRegistration> shopList(){
+        return shopRegistrationRepository.findAll();
     }
 }

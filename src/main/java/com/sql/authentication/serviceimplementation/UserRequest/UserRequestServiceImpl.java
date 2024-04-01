@@ -32,9 +32,10 @@ public class UserRequestServiceImpl implements UserRequestService {
     public UserRequest post(UserRequestDto dto,HttpSession session){
         UserRequest userRequest=new UserRequest();
         UserDetailsImpl userDetails=getUserDetails(session);
+        System.out.println("Helo" + userDetails.getEmail());
         User user=userRepository.findByEmail(userDetails.getEmail())
                 .orElseThrow(()->new RuntimeException("User not found"));
-        Ecategory ecategory=ecategoryRepository.findByName(dto.getECategory())
+        Ecategory ecategory=ecategoryRepository.findByName(dto.getCategories())
                 .orElseThrow(()->new RuntimeException("Category not found"));
         List<Shop> shop;
         if(dto.getAllShop().equalsIgnoreCase("Yes")){
@@ -56,6 +57,7 @@ public class UserRequestServiceImpl implements UserRequestService {
 
     public UserDetailsImpl getUserDetails(HttpSession session) {
         UserDetailsImpl userDetails = (UserDetailsImpl) session.getAttribute("user");
+        System.out.println(userDetails + "Hellooo");
         if (userDetails != null) {
             return userDetails;
         } else {

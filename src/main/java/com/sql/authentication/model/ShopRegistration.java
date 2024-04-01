@@ -19,7 +19,7 @@ public class ShopRegistration {
     private String ShopName;
     private long contactNo;
     private String location;
-    private List<String> proofFile;
+    private List<String> images;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "shop_category",
             joinColumns = @JoinColumn(name = "shopRegistration_id"),

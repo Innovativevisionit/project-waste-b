@@ -5,6 +5,8 @@ import com.sql.authentication.dto.ShopUpdateDto;
 import com.sql.authentication.model.ShopRegistration;
 import com.sql.authentication.payload.response.Response;
 import com.sql.authentication.service.Shop.ShopService;
+import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +32,7 @@ public class ShopController {
             @RequestPart("hazard") String hazard,
             @RequestPart("website") String website,
             @RequestPart("socialLink") String socialLink,
-            @RequestPart("images") MultipartFile[] images) {
+            @RequestPart("images") MultipartFile[] images, HttpSession session) {
         try {
             ShopRegisterDto shopDto = new ShopRegisterDto();
             shopDto.setShopName(shopName);
@@ -42,9 +44,12 @@ public class ShopController {
             shopDto.setWebsite(website);
             shopDto.setSocialLink(socialLink);
             shopDto.setFiles(Arrays.asList(images));
+            UserDetailsImpl userDetails=getUserDetails(session);
+            shopDto.setUserId(userDetails.getId().intValue());
+            System.out.println(shopDto);
             return shopService.shopRegistration(shopDto);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error :"+e.getMessage());
         }
     }
 
@@ -64,5 +69,15 @@ public class ShopController {
     @GetMapping("/shopList")
     public Object getList(){
         return shopService.shopList();
+    }
+    public UserDetailsImpl getUserDetails(HttpSession session) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) session.getAttribute("user");
+
+        System.out.println(userDetails + "Hellooo");
+        if (userDetails != null) {
+            return userDetails;
+        } else {
+            throw new RuntimeException("User not found in session");
+        }
     }
 }
