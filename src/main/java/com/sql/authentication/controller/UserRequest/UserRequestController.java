@@ -13,7 +13,7 @@ public class UserRequestController {
     @Autowired
     private UserRequestService requestService;
     @PostMapping("store")
-    public Object store(@Valid @ModelAttribute UserRequestDto userRequestDto, HttpSession session){
+    public Object store(@ModelAttribute UserRequestDto userRequestDto, HttpSession session){
         return requestService.post(userRequestDto,session);
     }
     @GetMapping("userList")

@@ -25,7 +25,7 @@ public class ShopRegisterDto {
     @NotBlank(message = "Location is Required")
     private String category;
     private List<MultipartFile> files;
-    private int userId;
+    private Integer userId;
     @NotBlank(message = "Recycling Method is required")
     private String recyclingMethod;
     @NotBlank(message = "Handling Hazard is required")

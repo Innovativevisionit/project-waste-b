@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/shop")
@@ -26,6 +30,7 @@ public class ShopController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @GetMapping("requestList")
     public Object request(@RequestParam("status") String status){
         return shopService.registerRequest(status);
@@ -42,5 +47,15 @@ public class ShopController {
     @GetMapping("/shopList")
     public Object getList(HttpSession session){
         return shopService.shopList(session);
+    }
+    public UserDetailsImpl getUserDetails(HttpSession session) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) session.getAttribute("user");
+
+        System.out.println(userDetails + "Hellooo");
+        if (userDetails != null) {
+            return userDetails;
+        } else {
+            throw new RuntimeException("User not found in session");
+        }
     }
 }

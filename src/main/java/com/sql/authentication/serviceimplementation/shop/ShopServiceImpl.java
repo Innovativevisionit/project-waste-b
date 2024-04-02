@@ -65,7 +65,7 @@ public class ShopServiceImpl implements ShopService {
 //        });
         shopRegistration.setShopName(data.getShopName());
         shopRegistration.setContactNo(Long.parseLong(data.getContactNo()));
-        shopRegistration.setProofFile(proofFiles);
+        shopRegistration.setImages(proofFiles);
         shopRegistration.setUserId(user);
         shopRegistration.setEcategory(ecategory);
         shopRegistration.setLocation(data.getLocation());
