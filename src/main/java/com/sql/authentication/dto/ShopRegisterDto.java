@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
+@ToString
 public class ShopRegisterDto {
     @NotBlank(message = "Shop Name is Required")
     private String shopName;

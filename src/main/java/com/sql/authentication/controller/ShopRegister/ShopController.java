@@ -34,6 +34,7 @@ public class ShopController {
             @RequestPart("socialLink") String socialLink,
             @RequestPart("images") MultipartFile[] images, HttpSession session) {
         try {
+            System.out.println("Shop Name" + shopName);
             ShopRegisterDto shopDto = new ShopRegisterDto();
             shopDto.setShopName(shopName);
             shopDto.setCategory(Collections.singleton(category));
@@ -44,9 +45,9 @@ public class ShopController {
             shopDto.setWebsite(website);
             shopDto.setSocialLink(socialLink);
             shopDto.setFiles(Arrays.asList(images));
-            UserDetailsImpl userDetails=getUserDetails(session);
-            shopDto.setUserId(userDetails.getId().intValue());
-            System.out.println(shopDto);
+//            UserDetailsImpl userDetails=getUserDetails(session);
+//            shopDto.setUserId(userDetails.getId().intValue());
+            System.out.println("Value" + shopDto);
             return shopService.shopRegistration(shopDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error :"+e.getMessage());

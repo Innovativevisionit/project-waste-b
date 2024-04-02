@@ -37,6 +37,7 @@ public class ShopServiceImpl implements ShopService {
     @Autowired
     private FetchAuthEmpId fetchAuthEmpId;
     public Object shopRegistration(ShopRegisterDto data){
+        System.out.println("Data :"  + data );
         ShopRegistration shopRegistration=new ShopRegistration();
         List<String> proofFiles = new ArrayList<>();
         for (MultipartFile file : data.getFiles()) {
@@ -45,7 +46,7 @@ public class ShopServiceImpl implements ShopService {
                 proofFiles.add(fileName);
             }
         }
-        User user=userRepository.findById(data.getUserId()).orElse(null);
+        User user=userRepository.findById(1).orElse(null);
         if(user==null){
             throw new RuntimeException(data.getUserId()+ "is not found.");
         }
@@ -69,6 +70,7 @@ public class ShopServiceImpl implements ShopService {
         shopRegistration.setWebsite(data.getWebsite());
         shopRegistration.setSocialLink(data.getSocialLink());
         shopRegistration.setStatus(StatusEnum.pending.getValue());
+        System.out.println(shopRegistration);
         return shopRegistrationRepository.save(shopRegistration);
 
     }
