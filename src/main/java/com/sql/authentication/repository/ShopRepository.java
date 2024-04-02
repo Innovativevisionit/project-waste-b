@@ -14,7 +14,7 @@ public interface ShopRepository extends JpaRepository<Shop,Long> {
     List<Shop> findByRegistration_LocationOrderByRegistration_LocationDesc(String location);
 //
     List<Shop> findByRegistration_LocationNotOrderByRegistration_LocationDesc(String location);
-    List<Shop> findByRegistration_Ecategories(Ecategory eCategory);
+    List<Shop> findByRegistration_Ecategory(Ecategory eCategory);
     List<Shop> findByShopCodeIn(List<String> shop);
 
     default List<Shop> findAllOrderByLocation(String location) {

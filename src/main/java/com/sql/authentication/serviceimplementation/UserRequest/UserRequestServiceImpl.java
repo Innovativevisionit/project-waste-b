@@ -1,19 +1,21 @@
 package com.sql.authentication.serviceimplementation.UserRequest;
 
+import com.sql.authentication.Enum.StatusEnum;
 import com.sql.authentication.dto.UserRequestDto;
 import com.sql.authentication.model.*;
-import com.sql.authentication.repository.EcategoryRepository;
-import com.sql.authentication.repository.ShopRepository;
-import com.sql.authentication.repository.UserRepository;
-import com.sql.authentication.repository.UserRequestRepository;
+import com.sql.authentication.payload.response.PostResponse;
+import com.sql.authentication.repository.*;
 import com.sql.authentication.service.UserRequest.UserRequestService;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+import com.sql.authentication.utils.FileUpload;
 import jakarta.servlet.http.HttpSession;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -27,7 +29,13 @@ public class UserRequestServiceImpl implements UserRequestService {
     @Autowired
     private ShopRepository shopRepository;
     @Autowired
+    private ShopRegistrationRepository shopRegistrationRepository;
+    @Autowired
     private UserRequestRepository userRequestRepository;
+    @Autowired
+    private ModelMapper  modelMapper;
+    @Autowired
+    private FileUpload fileUpload;
     @Override
     public UserRequest post(UserRequestDto dto,HttpSession session){
         UserRequest userRequest=new UserRequest();
@@ -37,20 +45,34 @@ public class UserRequestServiceImpl implements UserRequestService {
                 .orElseThrow(()->new RuntimeException("User not found"));
         Ecategory ecategory=ecategoryRepository.findByName(dto.getCategories())
                 .orElseThrow(()->new RuntimeException("Category not found"));
-        List<Shop> shop;
+        List<ShopRegistration> shop;
+//        if(dto.getAllShop().equalsIgnoreCase("Yes")){
+//            shop=shopRepository.findByRegistration_Ecategory(ecategory);
+//        }else{
+//            shop=shopRepository.findByShopCodeIn(dto.getShopId());
+//        }
         if(dto.getAllShop().equalsIgnoreCase("Yes")){
-            shop=shopRepository.findByRegistration_Ecategories(ecategory);
+            shop=shopRegistrationRepository.findByEcategoryAndStatus(ecategory, StatusEnum.approve.getValue());
         }else{
-            shop=shopRepository.findByShopCodeIn(dto.getShopId());
+            shop=shopRepository.findByShopCodeIn(dto.getShopId()).stream()
+                    .map(data->modelMapper.map(data.getRegistration(),ShopRegistration.class)).toList();
+        }
+        List<String> proofFiles = new ArrayList<>();
+        for (MultipartFile file : dto.getImages()) {
+            if (!file.isEmpty()) {
+                String fileName = fileUpload.uniqueFileName("Post", file);
+                proofFiles.add(fileName);
+            }
         }
         userRequest.setUserId(user);
         userRequest.setBrand(dto.getBrand());
         userRequest.setEcategory(ecategory);
+        userRequest.setImages(proofFiles);
         userRequest.setModel(dto.getModel());
         userRequest.setMaxAmount(Long.valueOf(dto.getMaxAmount()));
-        userRequest.setMaxAmount(Long.valueOf(dto.getMinAmount()));
+        userRequest.setMinAmount(Long.valueOf(dto.getMinAmount()));
         userRequest.setAllShop(dto.getAllShop());
-//        userRequest.setShop(shop);
+        userRequest.setShop(shop);
         userRequestRepository.save(userRequest);
         return userRequest;
     }
@@ -64,5 +86,14 @@ public class UserRequestServiceImpl implements UserRequestService {
             throw new RuntimeException("User not found in session");
         }
     }
+    //Post
+    public List<PostResponse> userPost(HttpSession session){
+        UserDetailsImpl userDetails=getUserDetails(session);
+        User user=userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(()->new RuntimeException("User not found"));
+        return userRequestRepository.findByUserId(user).stream()
+                .map(data->modelMapper.map(data,PostResponse.class)).toList();
+    }
+
 
 }

@@ -18,16 +18,16 @@ public class UserRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
     private String allShop;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_request_shops",
             joinColumns = @JoinColumn(name = "userRequest_id"),
-            inverseJoinColumns = @JoinColumn(name = "shop_id"))
-    private List<Shop> shop;
-    @OneToOne
+            inverseJoinColumns = @JoinColumn(name = "shop_registration_id"))
+    private List<ShopRegistration> shop;
+    @ManyToOne
     @JoinColumn(name = "ecategory_id")
     private Ecategory ecategory;
     private List<String> images;

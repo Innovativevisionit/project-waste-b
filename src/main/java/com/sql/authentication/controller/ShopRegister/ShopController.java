@@ -6,8 +6,10 @@ import com.sql.authentication.model.ShopRegistration;
 import com.sql.authentication.payload.response.Response;
 import com.sql.authentication.service.Shop.ShopService;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,7 +39,7 @@ public class ShopController {
             System.out.println("Shop Name" + shopName);
             ShopRegisterDto shopDto = new ShopRegisterDto();
             shopDto.setShopName(shopName);
-            shopDto.setCategory(Collections.singleton(category));
+            shopDto.setCategory(category);
             shopDto.setLocation(location);
             shopDto.setHandlingHazard(hazard);
             shopDto.setRecyclingMethod(recycleMethods);
@@ -48,7 +50,7 @@ public class ShopController {
 //            UserDetailsImpl userDetails=getUserDetails(session);
 //            shopDto.setUserId(userDetails.getId().intValue());
             System.out.println("Value" + shopDto);
-            return shopService.shopRegistration(shopDto);
+            return shopService.shopRegistration(shopDto, session);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error :"+e.getMessage());
         }
@@ -68,8 +70,8 @@ public class ShopController {
         }
     }
     @GetMapping("/shopList")
-    public Object getList(){
-        return shopService.shopList();
+    public Object getList(HttpSession session){
+        return shopService.shopList(session);
     }
     public UserDetailsImpl getUserDetails(HttpSession session) {
         UserDetailsImpl userDetails = (UserDetailsImpl) session.getAttribute("user");
