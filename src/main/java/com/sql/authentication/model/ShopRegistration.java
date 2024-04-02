@@ -3,6 +3,7 @@ package com.sql.authentication.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,16 +21,15 @@ public class ShopRegistration {
     private long contactNo;
     private String location;
     private List<String> proofFile;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "shop_category",
-            joinColumns = @JoinColumn(name = "shopRegistration_id"),
-            inverseJoinColumns = @JoinColumn(name = "ecategory_id"))
-    private Set<Ecategory> ecategories = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "ecategory_id")
+    private Ecategory ecategory;
     private String recyclingMethod;
     private String handlingHazard;
     private String website;
     private String socialLink;
     private String status;
     private String reason;
+    private LocalDate approvedDate;
 
 }

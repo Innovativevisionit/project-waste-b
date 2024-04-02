@@ -55,6 +55,7 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         session.setAttribute("user", userDetails);
+        System.out.println(session.getAttribute("user"));
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 

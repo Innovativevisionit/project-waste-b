@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -19,8 +20,10 @@ public class ShopRegisterDto {
     private String contactNo;
     @NotBlank(message = "Location is Required")
     private String location;
-    @NotEmpty(message = "Location is Required")
-    private Set<String> category;
+//    @NotEmpty(message = "Location is Required")
+//    private Set<String> category;
+    @NotBlank(message = "Location is Required")
+    private String category;
     private List<MultipartFile> files;
     private int userId;
     @NotBlank(message = "Recycling Method is required")
@@ -30,4 +33,5 @@ public class ShopRegisterDto {
     private String handlingHazard;
     private String website;
     private String socialLink;
+    private LocalDate approvedDate;
 }

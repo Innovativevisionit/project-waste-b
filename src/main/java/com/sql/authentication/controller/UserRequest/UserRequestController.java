@@ -16,5 +16,9 @@ public class UserRequestController {
     public Object store(@Valid @ModelAttribute UserRequestDto userRequestDto, HttpSession session){
         return requestService.post(userRequestDto,session);
     }
+    @GetMapping("userList")
+    public Object list(HttpSession session){
+        return requestService.userPost(session);
+    }
 
 }
