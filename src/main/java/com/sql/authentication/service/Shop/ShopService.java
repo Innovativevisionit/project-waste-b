@@ -13,5 +13,5 @@ public interface ShopService {
     Object shopRegistration(ShopRegisterDto shopRegistration, HttpSession session);
     List<ShopRegistration> registerRequest(String status);
     ShopRegistration updateShopRequest(ShopUpdateDto update);
-    List<ShopResponse> shopList(HttpSession session);
+    List<ShopRegistration> shopList(HttpSession session);
 }

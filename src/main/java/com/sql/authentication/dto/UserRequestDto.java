@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class UserRequestDto {
 //    @NotBlank(message = "Required Field")
-    @Pattern(regexp = "Yes|No",message = "The Value must be either Yes or No")
+//    @Pattern(regexp = "Yes|No",message = "The Value must be either Yes or No")
     private String allShop;
     private List<String> shopId;
     @NotBlank(message = "Ecategory is Required")
@@ -26,11 +26,11 @@ public class UserRequestDto {
     @Pattern(regexp = "[0-9]+", message = "Must contain only numbers")
     private String minAmount;
 
-    @AssertTrue
-    private boolean isShopId(){
-        if(allShop != null && allShop.equalsIgnoreCase("No")){
-            return !shopId.isEmpty();
-        }
-        return true;
-    }
+//    @AssertTrue
+//    private boolean isShopId(){
+//        if(allShop != null && allShop.equalsIgnoreCase("No")){
+//            return !shopId.isEmpty();
+//        }
+//        return true;
+//    }
 }

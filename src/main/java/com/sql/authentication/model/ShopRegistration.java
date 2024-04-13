@@ -20,7 +20,7 @@ public class ShopRegistration {
     private String ShopName;
     private long contactNo;
     private String location;
-    private List<String> proofFile;
+    private List<String> images;
     @ManyToOne
     @JoinColumn(name = "ecategory_id")
     private Ecategory ecategory;

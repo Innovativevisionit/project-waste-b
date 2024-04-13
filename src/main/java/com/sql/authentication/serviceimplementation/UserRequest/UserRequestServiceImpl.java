@@ -25,7 +25,6 @@ public class UserRequestServiceImpl implements UserRequestService {
     private UserRepository userRepository;
     @Autowired
     private EcategoryRepository ecategoryRepository;
-
     @Autowired
     private ShopRepository shopRepository;
     @Autowired
@@ -39,9 +38,9 @@ public class UserRequestServiceImpl implements UserRequestService {
     @Override
     public UserRequest post(UserRequestDto dto,HttpSession session){
         UserRequest userRequest=new UserRequest();
-        UserDetailsImpl userDetails=getUserDetails(session);
-        System.out.println("Helo" + userDetails.getEmail());
-        User user=userRepository.findByEmail(userDetails.getEmail())
+//        UserDetailsImpl userDetails=getUserDetails(session);
+
+        User user=userRepository.findByEmail("test@test.com")
                 .orElseThrow(()->new RuntimeException("User not found"));
         Ecategory ecategory=ecategoryRepository.findByName(dto.getCategories())
                 .orElseThrow(()->new RuntimeException("Category not found"));
@@ -51,16 +50,16 @@ public class UserRequestServiceImpl implements UserRequestService {
 //        }else{
 //            shop=shopRepository.findByShopCodeIn(dto.getShopId());
 //        }
-        if(dto.getAllShop().equalsIgnoreCase("Yes")){
-            shop=shopRegistrationRepository.findByEcategoryAndStatus(ecategory, StatusEnum.approve.getValue());
-        }else{
-            shop=shopRepository.findByShopCodeIn(dto.getShopId()).stream()
-                    .map(data->modelMapper.map(data.getRegistration(),ShopRegistration.class)).toList();
-        }
+//        if(dto.getAllShop().equalsIgnoreCase("Yes")){
+//            shop=shopRegistrationRepository.findByEcategoryAndStatus(ecategory, StatusEnum.approve.getValue());
+//        }else{
+//            shop=shopRepository.findByShopCodeIn(dto.getShopId()).stream()
+//                    .map(data->modelMapper.map(data.getRegistration(),ShopRegistration.class)).toList();
+//        }
         List<String> proofFiles = new ArrayList<>();
         for (MultipartFile file : dto.getImages()) {
             if (!file.isEmpty()) {
-                String fileName = fileUpload.uniqueFileName("Post", file);
+                String fileName = fileUpload.uniqueFileName("Proof", file);
                 proofFiles.add(fileName);
             }
         }
@@ -69,10 +68,11 @@ public class UserRequestServiceImpl implements UserRequestService {
         userRequest.setEcategory(ecategory);
         userRequest.setImages(proofFiles);
         userRequest.setModel(dto.getModel());
+        userRequest.setAllShop(dto.getAllShop());
         userRequest.setMaxAmount(Long.valueOf(dto.getMaxAmount()));
         userRequest.setMinAmount(Long.valueOf(dto.getMinAmount()));
-        userRequest.setAllShop(dto.getAllShop());
-        userRequest.setShop(shop);
+//        userRequest.setAllShop(dto.getAllShop());
+//        userRequest.setShop(shop);
         userRequestRepository.save(userRequest);
         return userRequest;
     }

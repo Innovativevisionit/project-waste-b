@@ -64,7 +64,7 @@ public class ShopServiceImpl implements ShopService {
 //        });
         shopRegistration.setShopName(data.getShopName());
         shopRegistration.setContactNo(Long.parseLong(data.getContactNo()));
-        shopRegistration.setProofFile(proofFiles);
+        shopRegistration.setImages(proofFiles);
         shopRegistration.setUserId(user);
         shopRegistration.setEcategory(ecategory);
         shopRegistration.setLocation(data.getLocation());
@@ -118,22 +118,22 @@ public class ShopServiceImpl implements ShopService {
 //        return "SH" + String.format("%05d", nextNumericPart);
         return  "Hello";
     }
-    public List<ShopResponse> shopList(HttpSession session){
-//        return shopRepository.findAllOrderByLocation("Coimbatore")
+    public List<ShopRegistration> shopList(HttpSession session){
+        return shopRegistrationRepository.findAll();
 //                .stream()
 //                .map(data->modelMapper.map(data,ShopResponse.class)).toList();
-        UserDetailsImpl details=getUserDetails(session);
-        User user=userRepository.findByEmail(details.getEmail()).orElse(null);
-        if(user==null){
-            throw new RuntimeException("User is not found.");
-        }
-        return shopRepository.findAllOrderByLocation(user.getLocation())
-        .stream()
-        .map(data->{
-            ShopResponse shopResponse=modelMapper.map(data.getRegistration(),ShopResponse.class);
-            shopResponse.setShopCode(data.getShopCode());
-            return shopResponse;
-        }).toList();
+//        UserDetailsImpl details=getUserDetails(session);
+//        User user=userRepository.findByEmail(details.getEmail()).orElse(null);
+//        if(user==null){
+//            throw new RuntimeException("User is not found.");
+//        }
+//        return shopRepository.findAllOrderByLocation(user.getLocation())
+//        .stream()
+//        .map(data->{
+//            ShopResponse shopResponse=modelMapper.map(data.getRegistration(),ShopResponse.class);
+//            shopResponse.setShopCode(data.getShopCode());
+//            return shopResponse;
+//        }).toList();
 
 //        return shopRegistrationRepository.
 //                findAllOrderByLocation(user.getLocation(),StatusEnum.approve.getValue()).stream().map(data->modelMapper.map(data,ShopResponse.class)).toList();
