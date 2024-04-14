@@ -4,6 +4,7 @@ import com.sql.authentication.Enum.StatusEnum;
 import com.sql.authentication.dto.ShopRegisterDto;
 import com.sql.authentication.dto.ShopUpdateDto;
 import com.sql.authentication.model.*;
+import com.sql.authentication.payload.response.ShopDto;
 import com.sql.authentication.payload.response.ShopResponse;
 import com.sql.authentication.repository.*;
 import com.sql.authentication.service.Shop.ShopService;
@@ -28,7 +29,6 @@ public class ShopServiceImpl implements ShopService {
     private ShopRegistrationRepository shopRegistrationRepository;
     @Autowired
     private EcategoryRepository ecategoryRepository;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -41,7 +41,8 @@ public class ShopServiceImpl implements ShopService {
     private FetchAuthEmpId fetchAuthEmpId;
     @Autowired
     private ModelMapper modelMapper;
-    public Object shopRegistration(ShopRegisterDto data,HttpSession session){
+
+    public Object shopRegistration(ShopRegisterDto data){
         ShopRegistration shopRegistration=new ShopRegistration();
         List<String> proofFiles = new ArrayList<>();
         for (MultipartFile file : data.getFiles()) {
@@ -50,18 +51,13 @@ public class ShopServiceImpl implements ShopService {
                 proofFiles.add(fileName);
             }
         }
-        User user=userRepository.findById(1).orElse(null);
+        User user=userRepository.findByEmail(data.getEmail()).orElse(null);
         if(user==null){
             throw new RuntimeException(data.getUserId()+ "is not found.");
         }
+        Ecategory ecategory = ecategoryRepository.findByName(data.getCategory())
+            .orElseThrow(() -> new RuntimeException(data.getCategory()+ "is not found."));
 
-//        Set<String> dataCategory = data.getCategory();
-//        Set<Ecategory> ecategorySet = new HashSet<>();
-//        dataCategory.forEach(category -> {
-            Ecategory ecategory = ecategoryRepository.findByName(data.getCategory())
-                    .orElseThrow(() -> new RuntimeException(data.getCategory()+ "is not found."));
-//            ecategorySet.add(ecategory);
-//        });
         shopRegistration.setShopName(data.getShopName());
         shopRegistration.setContactNo(Long.parseLong(data.getContactNo()));
         shopRegistration.setImages(proofFiles);
@@ -73,14 +69,26 @@ public class ShopServiceImpl implements ShopService {
         shopRegistration.setWebsite(data.getWebsite());
         shopRegistration.setSocialLink(data.getSocialLink());
         shopRegistration.setStatus(StatusEnum.pending.getValue());
-        System.out.println(shopRegistration);
         return shopRegistrationRepository.save(shopRegistration);
 
     }
+
+    public List<ShopDto> pendingShop(String status){
+        
+        return shopRegistrationRepository.findByStatus(status).stream()
+        .map(data->modelMapper.map(data,ShopDto.class)).toList();
+    }
+
+    public List<ShopDto> approvedShop(String status){
+        
+        return shopRegistrationRepository.findByStatus(status).stream()
+        .map(data->modelMapper.map(data,ShopDto.class)).toList();
+    }
+
     public List<ShopRegistration> registerRequest(String status){
         return shopRegistrationRepository.findByStatus(status.substring(0, 1).toUpperCase() + status.substring(1));
     }
-    //Approve or Reject the Shop Request
+
     public ShopRegistration updateShopRequest(ShopUpdateDto update){
         ShopRegistration registration=shopRegistrationRepository.findById(update.getId())
                 .orElseThrow(()->new RuntimeException("Id not found"));
@@ -88,18 +96,14 @@ public class ShopServiceImpl implements ShopService {
             throw new NoSuchElementException("Already Status changed");
         }
         if(update.getStatus().equalsIgnoreCase(StatusEnum.reject.getValue())){
-            registration.setStatus(StatusEnum.rejected.getValue());
+            registration.setStatus(StatusEnum.reject.getValue());
             registration.setReason(update.getReason());
+            registration.setApprovedDate(LocalDate.now());
             shopRegistrationRepository.save(registration);
         } else if (update.getStatus().equalsIgnoreCase(StatusEnum.approve.getValue())) {
             registration.setStatus(StatusEnum.approved.getValue());
+            registration.setReason(update.getReason());
             registration.setApprovedDate(LocalDate.now());
-            Shop shop=new Shop();
-            String shopCode=shopRepository.generateNextShopCode();
-            shop.setShopCode(shopCode);
-            shop.setApprovedDate(LocalDate.now());
-            shop.setRegistration(registration);
-            shopRepository.save(shop);
             shopRegistrationRepository.save(registration);
             User user=userRepository.findByEmail(registration.getUserId().getEmail())
                     .orElseThrow(()->new RuntimeException("Not found"));
@@ -112,6 +116,40 @@ public class ShopServiceImpl implements ShopService {
        return registration;
 
     }
+    
+    //Approve or Reject the Shop Request
+    // public ShopRegistration updateShopRequest(ShopUpdateDto update){
+    //     ShopRegistration registration=shopRegistrationRepository.findById(update.getId())
+    //             .orElseThrow(()->new RuntimeException("Id not found"));
+    //     if(!registration.getStatus().equalsIgnoreCase(StatusEnum.pending.getValue())){
+    //         throw new NoSuchElementException("Already Status changed");
+    //     }
+    //     if(update.getStatus().equalsIgnoreCase(StatusEnum.reject.getValue())){
+    //         registration.setStatus(StatusEnum.rejected.getValue());
+    //         registration.setReason(update.getReason());
+    //         shopRegistrationRepository.save(registration);
+    //     } else if (update.getStatus().equalsIgnoreCase(StatusEnum.approve.getValue())) {
+    //         registration.setStatus(StatusEnum.approved.getValue());
+    //         registration.setApprovedDate(LocalDate.now());
+    //         Shop shop=new Shop();
+    //         String shopCode=shopRepository.generateNextShopCode();
+    //         shop.setShopCode(shopCode);
+    //         shop.setApprovedDate(LocalDate.now());
+    //         shop.setRegistration(registration);
+    //         shopRepository.save(shop);
+    //         shopRegistrationRepository.save(registration);
+    //         User user=userRepository.findByEmail(registration.getUserId().getEmail())
+    //                 .orElseThrow(()->new RuntimeException("Not found"));
+    //         Set<Role> roles=new HashSet<>();
+    //         Role role=roleRepository.findByName("Shop Owner").orElseThrow(()-> new RuntimeException("Role Not found"));
+    //         roles.add(role);
+    //         user.setRoles(roles);
+    //         userRepository.save(user);
+    //     }
+    //    return registration;
+
+    // }
+
     private String shopCode(){
 //        int lastCode=shopRepository.findMaxNumericPart();
 //        int nextNumericPart = (lastCode != 0) ? lastCode + 1 : 1;

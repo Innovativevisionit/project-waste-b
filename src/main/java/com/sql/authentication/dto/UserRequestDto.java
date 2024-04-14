@@ -11,20 +11,19 @@ import java.util.List;
 
 @Data
 public class UserRequestDto {
-//    @NotBlank(message = "Required Field")
-//    @Pattern(regexp = "Yes|No",message = "The Value must be either Yes or No")
-    private String allShop;
-    private List<String> shopId;
+
+    private String name;
     @NotBlank(message = "Ecategory is Required")
     private String categories;
     private List<MultipartFile> images;
     private String brand;
     private String model;
-    private String condition;
+    private String postCondition;
     @Pattern(regexp = "[0-9]+", message = "Must contain only numbers")
     private String maxAmount;
     @Pattern(regexp = "[0-9]+", message = "Must contain only numbers")
     private String minAmount;
+    private String email;
 
 //    @AssertTrue
 //    private boolean isShopId(){

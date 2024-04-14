@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 public interface UserRequestService {
-    UserRequest post(UserRequestDto userRequestDto, HttpSession session);
-    List<PostResponse> userPost(HttpSession session);
+    UserRequest post(UserRequestDto userRequestDto);
+    List<PostResponse> userPost(String email);
+    List<PostResponse> allPostList();
 }

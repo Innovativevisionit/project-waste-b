@@ -24,8 +24,11 @@ import java.util.Collections;
 @RequestMapping("/api/shop")
 public class ShopController {
     @Autowired private ShopService shopService;
+
+    //save shop details
     @PostMapping("/register")
     public Object registerShop(
+            @RequestPart("email") String email,
             @RequestPart("shopName") String shopName,
             @RequestPart("contactNo") String contactNo,
             @RequestPart("location") String location,
@@ -34,10 +37,10 @@ public class ShopController {
             @RequestPart("hazard") String hazard,
             @RequestPart("website") String website,
             @RequestPart("socialLink") String socialLink,
-            @RequestPart("images") MultipartFile[] images, HttpSession session) {
+            @RequestPart("images") MultipartFile[] images) {
         try {
-            System.out.println("Shop Name" + shopName);
             ShopRegisterDto shopDto = new ShopRegisterDto();
+            shopDto.setEmail(email);
             shopDto.setShopName(shopName);
             shopDto.setCategory(category);
             shopDto.setLocation(location);
@@ -47,21 +50,28 @@ public class ShopController {
             shopDto.setWebsite(website);
             shopDto.setSocialLink(socialLink);
             shopDto.setFiles(Arrays.asList(images));
-//            UserDetailsImpl userDetails=getUserDetails(session);
-//            shopDto.setUserId(userDetails.getId().intValue());
-            System.out.println("Value" + shopDto);
-            return shopService.shopRegistration(shopDto, session);
+
+            return shopService.shopRegistration(shopDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error :"+e.getMessage());
         }
     }
 
-    @GetMapping("requestList")
-    public Object request(@RequestParam("status") String status){
-        return shopService.registerRequest(status);
+    //pending shop list
+    @GetMapping("pendingShop")
+    public Object pendingShop(@RequestParam("status") String status){
+        return shopService.pendingShop(status);
     }
+
+    //approved shop list
+    @GetMapping("approvedShop")
+    public Object approvedShop(@RequestParam("status") String status){
+        return shopService.approvedShop(status);
+    }
+
+    //approve or reject the shop owner
     @PutMapping("update")
-    public Object update(@Valid  @RequestBody ShopUpdateDto updateDto){
+    public Object update(@Valid @RequestBody ShopUpdateDto updateDto){
         try {
             ShopRegistration registration=shopService.updateShopRequest(updateDto);
             return ResponseEntity.ok().body(Response.success("Updated Successfully",registration));
@@ -69,18 +79,16 @@ public class ShopController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+//above code completed by divya
+    
+    @GetMapping("requestList")
+    public Object request(@RequestParam("status") String status){
+        return shopService.registerRequest(status);
+    }
+
     @GetMapping("/shopList")
     public Object getList(HttpSession session){
         return shopService.shopList(session);
-    }
-    public UserDetailsImpl getUserDetails(HttpSession session) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) session.getAttribute("user");
-
-        System.out.println(userDetails + "Hellooo");
-        if (userDetails != null) {
-            return userDetails;
-        } else {
-            throw new RuntimeException("User not found in session");
-        }
     }
 }

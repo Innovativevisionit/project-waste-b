@@ -36,4 +36,5 @@ public class ShopRegisterDto {
     private String website;
     private String socialLink;
     private LocalDate approvedDate;
+    private String email;
 }

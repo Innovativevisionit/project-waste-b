@@ -18,21 +18,22 @@ public class UserRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int id;
+    private String name;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
-    private String allShop;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_request_shops",
-            joinColumns = @JoinColumn(name = "userRequest_id"),
-            inverseJoinColumns = @JoinColumn(name = "shop_registration_id"))
-    private List<ShopRegistration> shop;
+    // @ManyToMany(cascade = CascadeType.ALL)
+    // @JoinTable(name = "user_request_shops",
+    //         joinColumns = @JoinColumn(name = "userRequest_id"),
+    //         inverseJoinColumns = @JoinColumn(name = "shop_registration_id"))
+    // private List<ShopRegistration> shop;
     @ManyToOne
     @JoinColumn(name = "ecategory_id")
     private Ecategory ecategory;
     private List<String> images;
     private String brand;
     private String model;
+    private String postCondition;
     private Long minAmount;
     private Long maxAmount;
 

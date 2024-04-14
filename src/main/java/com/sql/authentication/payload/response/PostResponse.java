@@ -10,11 +10,13 @@ import java.util.List;
 @Data
 public class PostResponse {
     private  int id;
+    private String name;
     private String userIdEmail;
-    private String allShop;
+    private String userIdUsername;
     private String ecategoryName;
     private String brand;
     private String model;
+    private String postCondition;
     private Long minAmount;
     private Long maxAmount;
 
