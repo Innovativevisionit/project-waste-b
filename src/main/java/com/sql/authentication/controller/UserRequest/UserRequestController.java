@@ -27,7 +27,7 @@ public class UserRequestController {
                         @RequestPart("categories") String categories,
                         @RequestPart("brand") String brand,
                         @RequestPart("model") String model,
-                        @RequestPart("postCondition") String postCondition,
+                        @RequestPart("condition") String postCondition,
                         @RequestPart("minAmount") String minAmount,
                         @RequestPart("maxAmount") String maxAmount,
                         @RequestPart("email") String email,
@@ -48,7 +48,7 @@ public class UserRequestController {
     }
 
     @GetMapping("userPostList")
-    public Object list(@RequestPart("email") String email){
+    public Object list(@RequestParam("email") String email){
         return requestService.userPost(email);
     }
 
