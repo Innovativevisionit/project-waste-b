@@ -158,5 +158,10 @@ public class AuthController {
         return "saved";
     }
     
-
+    @GetMapping("getDeliveryMan")
+    public List<String> getDeliveryMan() {
+        return deliveryRepository.findAll().stream().map(Deliveryman::getName)
+        .collect(Collectors.toList());
+    }
+    
 }
