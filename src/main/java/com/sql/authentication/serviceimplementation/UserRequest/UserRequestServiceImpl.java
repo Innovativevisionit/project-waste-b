@@ -83,4 +83,29 @@ public class UserRequestServiceImpl implements UserRequestService {
        
     }
 
+    @Override
+    public PostResponse getById(Integer id) {
+        
+        Optional<UserRequest> data = userRequestRepository.findById(id);
+
+    PostResponse postResponse = new PostResponse();
+    if (data.isPresent()) {
+        postResponse = modelMapper.map(data.get(), PostResponse.class);
+    }
+    return postResponse;
+    }
+
+    @Override
+    public List<PostResponse> getCategoryBasedpost(String email) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new RuntimeException("User not found"));
+        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);  
+
+        Optional<Ecategory> ecategory = ecategoryRepository.findById(registration.getEcategory().getId());
+        List<UserRequest> postList = userRequestRepository.findByEcategory(ecategory.get());
+
+        return postList.stream()
+                .map(data->modelMapper.map(data,PostResponse.class)).toList();
+    }
+
 }

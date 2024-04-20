@@ -1,5 +1,6 @@
 package com.sql.authentication.controller.auth;
 
+import com.sql.authentication.dto.UserResponseDto;
 import com.sql.authentication.jwt.JwtUtils;
 import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
@@ -12,6 +13,8 @@ import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,6 +31,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
@@ -42,6 +48,10 @@ public class AuthController {
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest, HttpSession session) {
@@ -101,6 +111,8 @@ public class AuthController {
             }
 
             user.setRoles(roles);
+            user.setAge(signUpRequest.getAge());
+            user.setMobileNo(signUpRequest.getMobileNo());
             System.out.println(user);
             userRepository.save(user);
 
@@ -119,4 +131,17 @@ public class AuthController {
                 .body(new ApiResponse(true,"You've been signed out!"));
     }
 
+    @GetMapping("getUserDetails")
+    public UserResponseDto getUserDetails(@RequestParam String email) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        User user = userRepository.findByEmail(email).get();
+        userResponseDto = modelMapper.map(user, UserResponseDto.class);
+        String roles = user.getRoles().stream()
+                            .map(Role::getName) // Assuming Role has a method getName() to get the role name
+                            .collect(Collectors.joining(", "));
+        userResponseDto.setRolesName(roles);
+        return userResponseDto;
+
+    }
+    
 }

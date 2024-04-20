@@ -12,4 +12,6 @@ public interface UserRequestService {
     UserRequest post(UserRequestDto userRequestDto);
     List<PostResponse> userPost(String email);
     List<PostResponse> allPostList();
+    PostResponse getById(Integer id);
+    List<PostResponse> getCategoryBasedpost(String email);
 }

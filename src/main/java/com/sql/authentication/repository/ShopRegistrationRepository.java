@@ -6,6 +6,8 @@ import com.sql.authentication.model.ShopRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import com.sql.authentication.model.User;
+
 
 public interface ShopRegistrationRepository extends JpaRepository<ShopRegistration,Integer> {
     List<ShopRegistration> findByStatus(String status);
@@ -19,7 +21,10 @@ public interface ShopRegistrationRepository extends JpaRepository<ShopRegistrati
         chennaiShops.addAll(otherShops);
         return chennaiShops;
     }
+    boolean existsByUserId(User userId);
 
-
+    ShopRegistration findByUserId(User userId);
+    
     List<ShopRegistration> findByEcategoryAndStatus(Ecategory ecategory,String status);
+
 }

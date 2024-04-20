@@ -9,6 +9,7 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class PostResponse {
+    
     private  int id;
     private String name;
     private String userIdEmail;
@@ -19,5 +20,6 @@ public class PostResponse {
     private String postCondition;
     private Long minAmount;
     private Long maxAmount;
+    private String postStatus;
 
 }

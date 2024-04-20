@@ -55,6 +55,10 @@ public class ShopServiceImpl implements ShopService {
         if(user==null){
             throw new RuntimeException(data.getUserId()+ "is not found.");
         }
+        Boolean alreadyExist = shopRegistrationRepository.existsByUserId(user);
+        if(alreadyExist){
+            throw new RuntimeException("Already Registered");
+        }
         Ecategory ecategory = ecategoryRepository.findByName(data.getCategory())
             .orElseThrow(() -> new RuntimeException(data.getCategory()+ "is not found."));
 
