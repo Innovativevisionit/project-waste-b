@@ -1,6 +1,7 @@
 package com.sql.authentication.serviceimplementation.UserRequest;
 
 import com.sql.authentication.Enum.StatusEnum;
+import com.sql.authentication.dto.PostDto;
 import com.sql.authentication.dto.UserRequestDto;
 import com.sql.authentication.model.*;
 import com.sql.authentication.payload.response.PostResponse;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserRequestServiceImpl implements UserRequestService {
@@ -63,6 +65,7 @@ public class UserRequestServiceImpl implements UserRequestService {
         userRequest.setPostCondition(dto.getPostCondition());
         userRequest.setMaxAmount(Long.valueOf(dto.getMaxAmount()));
         userRequest.setMinAmount(Long.valueOf(dto.getMinAmount()));
+        userRequest.setStatus("pending");
         userRequestRepository.save(userRequest);
         return userRequest;
     }
@@ -81,6 +84,77 @@ public class UserRequestServiceImpl implements UserRequestService {
         return userRequestRepository.findAll().stream()
                 .map(data->modelMapper.map(data,PostResponse.class)).toList();
        
+    }
+
+    @Override
+    public PostResponse getById(Integer id) {
+        
+        Optional<UserRequest> data = userRequestRepository.findById(id);
+
+    PostResponse postResponse = new PostResponse();
+    if (data.isPresent()) {
+        postResponse = modelMapper.map(data.get(), PostResponse.class);
+    }
+    return postResponse;
+    }
+
+    @Override
+    public List<PostResponse> getCategoryBasedpost(String email) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new RuntimeException("User not found"));
+        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);  
+
+        Optional<Ecategory> ecategory = ecategoryRepository.findById(registration.getEcategory().getId());
+        List<UserRequest> postList = userRequestRepository.findByEcategory(ecategory.get());
+
+        return postList.stream()
+                .map(data->modelMapper.map(data,PostResponse.class)).toList();
+    }
+
+    @Override
+    public String acceptPost(PostDto postDto) {
+        
+        UserRequest userRequest =  userRequestRepository.findById(postDto.getPostId()).get();
+
+        if(postDto.getStatus().equals("reject")){
+            userRequest.setStatus("pending");
+            userRequest.setApprovedBy(null);
+            userRequest.setDeliverymanName(null);
+            userRequest.setReason(null);
+        }else{
+            userRequest.setStatus("approved");
+            User user=userRepository.findByEmail(postDto.getEmail())
+                .orElseThrow(()->new RuntimeException("User not found"));
+        userRequest.setApprovedBy(user.getId());
+        userRequest.setDeliverymanName(postDto.getDeliveryMan());
+        userRequest.setReason(postDto.getReason());
+        }
+        userRequestRepository.save(userRequest);
+        return "saved";
+    }
+
+    @Override
+    public List<String> getPendingPostByUser(String email) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new RuntimeException("User not found"));
+
+        List<UserRequest> result = userRequestRepository.findByUserIdAndStatus(user,"pending");
+        
+        List<String> data = result.stream().map(UserRequest::getName)
+                            .collect(Collectors.toList());
+        return data;
+    }
+
+    @Override
+    public List<PostResponse> getRequestedPost(String email) {
+        User user=userRepository.findByEmail(email)
+        .orElseThrow(()->new RuntimeException("User not found"));
+
+        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);
+
+        List<UserRequest> postList = userRequestRepository.findByRequestedShopId(registration.getId());
+        return postList.stream()
+        .map(data->modelMapper.map(data,PostResponse.class)).toList();
     }
 
 }

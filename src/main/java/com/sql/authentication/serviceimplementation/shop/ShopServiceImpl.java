@@ -41,6 +41,8 @@ public class ShopServiceImpl implements ShopService {
     private FetchAuthEmpId fetchAuthEmpId;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private UserRequestRepository userRequestRepository;
 
     public Object shopRegistration(ShopRegisterDto data){
         ShopRegistration shopRegistration=new ShopRegistration();
@@ -54,6 +56,10 @@ public class ShopServiceImpl implements ShopService {
         User user=userRepository.findByEmail(data.getEmail()).orElse(null);
         if(user==null){
             throw new RuntimeException(data.getUserId()+ "is not found.");
+        }
+        Boolean alreadyExist = shopRegistrationRepository.existsByUserId(user);
+        if(alreadyExist){
+            throw new RuntimeException("Already Registered");
         }
         Ecategory ecategory = ecategoryRepository.findByName(data.getCategory())
             .orElseThrow(() -> new RuntimeException(data.getCategory()+ "is not found."));
@@ -177,6 +183,7 @@ public class ShopServiceImpl implements ShopService {
 //                findAllOrderByLocation(user.getLocation(),StatusEnum.approve.getValue()).stream().map(data->modelMapper.map(data,ShopResponse.class)).toList();
 
     }
+
     public UserDetailsImpl getUserDetails(HttpSession session) {
         UserDetailsImpl userDetails = (UserDetailsImpl) session.getAttribute("user");
         if (userDetails != null) {
@@ -184,5 +191,15 @@ public class ShopServiceImpl implements ShopService {
         } else {
             throw new RuntimeException("User not found in session");
         }
+    }
+
+    @Override
+    public String sendPostToShop(int shopId,String postname) {
+        
+        UserRequest userRequest = userRequestRepository.findByName(postname);  //post name unique
+
+        userRequest.setRequestedShopId(shopId);
+        userRequestRepository.save(userRequest);
+        return "sent";
     }
 }

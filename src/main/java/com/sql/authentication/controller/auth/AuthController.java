@@ -1,17 +1,23 @@
 package com.sql.authentication.controller.auth;
 
+import com.sql.authentication.dto.UserResponseDto;
 import com.sql.authentication.jwt.JwtUtils;
+import com.sql.authentication.model.Deliveryman;
 import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignInRequest;
 import com.sql.authentication.payload.request.SignUpRequest;
 import com.sql.authentication.payload.response.ApiResponse;
 import com.sql.authentication.payload.response.LoginResponse;
+import com.sql.authentication.repository.DeliveryRepository;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
+import com.sql.authentication.repository.UserRequestRepository;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,6 +34,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
@@ -37,11 +49,19 @@ public class AuthController {
     @Autowired
     UserRepository userRepository;
     @Autowired
+    DeliveryRepository deliveryRepository;
+    @Autowired
     RoleRepository roleRepository;
     @Autowired
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+    private UserRequestRepository userRequestRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest, HttpSession session) {
@@ -101,6 +121,8 @@ public class AuthController {
             }
 
             user.setRoles(roles);
+            user.setAge(signUpRequest.getAge());
+            user.setMobileNo(signUpRequest.getMobileNo());
             System.out.println(user);
             userRepository.save(user);
 
@@ -119,4 +141,34 @@ public class AuthController {
                 .body(new ApiResponse(true,"You've been signed out!"));
     }
 
+    @GetMapping("getUserDetails")
+    public UserResponseDto getUserDetails(@RequestParam String email) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        User user = userRepository.findByEmail(email).get();
+        userResponseDto = modelMapper.map(user, UserResponseDto.class);
+        String roles = user.getRoles().stream()
+                            .map(Role::getName) // Assuming Role has a method getName() to get the role name
+                            .collect(Collectors.joining(", "));
+        userResponseDto.setRolesName(roles);
+        Long pendingPostCount = userRequestRepository.countByUserIdAndStatus(user,"pending");
+        Long approvedPostCount = userRequestRepository.countByUserIdAndStatus(user,"approved");
+        userResponseDto.setAprovedPostCount(approvedPostCount);
+        userResponseDto.setPendingPostCount(pendingPostCount);
+        return userResponseDto;
+
+    }
+    
+    @PostMapping("/store-deliveryman")
+    public String storedelivery(@RequestBody Deliveryman deliveryman) {
+        
+        deliveryRepository.save(deliveryman);
+        return "saved";
+    }
+    
+    @GetMapping("getDeliveryMan")
+    public List<String> getDeliveryMan() {
+        return deliveryRepository.findAll().stream().map(Deliveryman::getName)
+        .collect(Collectors.toList());
+    }
+    
 }

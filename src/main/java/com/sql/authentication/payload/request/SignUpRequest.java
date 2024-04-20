@@ -22,4 +22,6 @@ public class SignUpRequest {
     private String password;
 
     private String location;
+    private String mobileNo;
+    private String age;
 }
