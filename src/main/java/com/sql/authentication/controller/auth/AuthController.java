@@ -12,6 +12,7 @@ import com.sql.authentication.payload.response.LoginResponse;
 import com.sql.authentication.repository.DeliveryRepository;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
+import com.sql.authentication.repository.UserRequestRepository;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -55,6 +56,8 @@ public class AuthController {
     PasswordEncoder encoder;
     @Autowired
     JwtUtils jwtUtils;
+    @Autowired
+    private UserRequestRepository userRequestRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -147,6 +150,10 @@ public class AuthController {
                             .map(Role::getName) // Assuming Role has a method getName() to get the role name
                             .collect(Collectors.joining(", "));
         userResponseDto.setRolesName(roles);
+        Long pendingPostCount = userRequestRepository.countByUserIdAndStatus(user,"pending");
+        Long approvedPostCount = userRequestRepository.countByUserIdAndStatus(user,"approved");
+        userResponseDto.setAprovedPostCount(approvedPostCount);
+        userResponseDto.setPendingPostCount(pendingPostCount);
         return userResponseDto;
 
     }

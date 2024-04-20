@@ -18,4 +18,6 @@ public interface UserRequestRepository extends JpaRepository<UserRequest,Integer
 
     List<UserRequest> findByEcategory(Ecategory ecategory);
 
+    Long countByUserIdAndStatus(User user,String status);
+
 }

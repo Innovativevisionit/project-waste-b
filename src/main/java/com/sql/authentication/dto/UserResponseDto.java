@@ -18,11 +18,7 @@ public class UserResponseDto {
     private String age;
     // private Set<Role> roles;
     private String rolesName;
-    private int aprovedPostCount;
-    private int rejectedPostCount;
-    private int approvedShopsCount;
-    private int rejectedShopsCount;
-
-    
+    private Long aprovedPostCount;
+    private Long pendingPostCount;
     
 }
