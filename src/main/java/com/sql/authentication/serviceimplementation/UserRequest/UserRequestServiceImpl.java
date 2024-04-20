@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserRequestServiceImpl implements UserRequestService {
@@ -130,6 +131,30 @@ public class UserRequestServiceImpl implements UserRequestService {
         }
         userRequestRepository.save(userRequest);
         return "saved";
+    }
+
+    @Override
+    public List<String> getPendingPostByUser(String email) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new RuntimeException("User not found"));
+
+        List<UserRequest> result = userRequestRepository.findByUserIdAndStatus(user,"pending");
+        
+        List<String> data = result.stream().map(UserRequest::getName)
+                            .collect(Collectors.toList());
+        return data;
+    }
+
+    @Override
+    public List<PostResponse> getRequestedPost(String email) {
+        User user=userRepository.findByEmail(email)
+        .orElseThrow(()->new RuntimeException("User not found"));
+
+        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);
+
+        List<UserRequest> postList = userRequestRepository.findByRequestedShopId(registration.getId());
+        return postList.stream()
+        .map(data->modelMapper.map(data,PostResponse.class)).toList();
     }
 
 }

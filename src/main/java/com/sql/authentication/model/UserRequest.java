@@ -40,5 +40,6 @@ public class UserRequest {
     private String deliverymanName;
     private Long approvedBy;
     private String reason;
+    private int requestedShopId;
 
 }

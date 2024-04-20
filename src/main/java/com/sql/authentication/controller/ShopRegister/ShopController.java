@@ -19,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Collections;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/shop")
@@ -80,6 +83,13 @@ public class ShopController {
         }
     }
 
+    @PostMapping("/send-post-to-shop")
+    public String sendPostToShop(@RequestParam int shopId,@RequestParam String postname) {
+        
+        return shopService.sendPostToShop(shopId,postname);
+    }
+
+
 //above code completed by divya
     
     @GetMapping("requestList")
@@ -91,4 +101,7 @@ public class ShopController {
     public Object getList(HttpSession session){
         return shopService.shopList(session);
     }
+
+    
+    
 }

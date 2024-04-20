@@ -17,4 +17,6 @@ public interface ShopService {
     List<ShopDto> approvedShop(String status);
     ShopRegistration updateShopRequest(ShopUpdateDto update);
     List<ShopRegistration> shopList(HttpSession session);
+
+    String sendPostToShop(int shopId,String postname);
 }

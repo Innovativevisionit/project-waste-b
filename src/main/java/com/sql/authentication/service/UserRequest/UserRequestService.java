@@ -16,4 +16,8 @@ public interface UserRequestService {
     PostResponse getById(Integer id);
     List<PostResponse> getCategoryBasedpost(String email);
     String acceptPost(PostDto postDto);
+    
+    List<String> getPendingPostByUser(String email);
+
+    List<PostResponse> getRequestedPost(String email);
 }

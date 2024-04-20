@@ -80,4 +80,18 @@ public class UserRequestController {
         return requestService.acceptPost(postDto);
     }
     
+    @GetMapping("user-pending-post")
+    public List<String> getPendingPostByUser(@RequestParam String email) {
+
+        return requestService.getPendingPostByUser(email);
+    }
+    
+    @GetMapping("requested-post")
+    public Object getRequestedPost(@RequestParam String email) {
+        return requestService.getRequestedPost(email);
+    }
+    
 }
+
+
+
