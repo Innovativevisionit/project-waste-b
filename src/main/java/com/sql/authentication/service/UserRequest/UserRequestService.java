@@ -1,5 +1,6 @@
 package com.sql.authentication.service.UserRequest;
 
+import com.sql.authentication.dto.PostDto;
 import com.sql.authentication.dto.UserRequestDto;
 import com.sql.authentication.model.UserRequest;
 import com.sql.authentication.payload.response.PostResponse;
@@ -14,4 +15,5 @@ public interface UserRequestService {
     List<PostResponse> allPostList();
     PostResponse getById(Integer id);
     List<PostResponse> getCategoryBasedpost(String email);
+    String acceptPost(PostDto postDto);
 }

@@ -1,5 +1,6 @@
 package com.sql.authentication.controller.UserRequest;
 
+import com.sql.authentication.dto.PostDto;
 import com.sql.authentication.dto.UserRequestDto;
 import com.sql.authentication.model.UserRequest;
 import com.sql.authentication.repository.UserRequestRepository;
@@ -14,6 +15,9 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -70,4 +74,10 @@ public class UserRequestController {
         return requestService.getCategoryBasedpost(email);
     }
 
+    @PostMapping("/post-accept")
+    public String acceptPost(@RequestBody PostDto postDto) {
+        
+        return requestService.acceptPost(postDto);
+    }
+    
 }

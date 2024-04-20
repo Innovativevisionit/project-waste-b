@@ -36,5 +36,9 @@ public class UserRequest {
     private String postCondition;
     private Long minAmount;
     private Long maxAmount;
+    private String status;
+    private String deliverymanName;
+    private Long approvedBy;
+    private String reason;
 
 }

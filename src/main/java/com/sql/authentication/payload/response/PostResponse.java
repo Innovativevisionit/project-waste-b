@@ -21,5 +21,6 @@ public class PostResponse {
     private Long minAmount;
     private Long maxAmount;
     private String postStatus;
+    private String status;
 
 }

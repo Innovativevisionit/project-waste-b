@@ -1,6 +1,7 @@
 package com.sql.authentication.serviceimplementation.UserRequest;
 
 import com.sql.authentication.Enum.StatusEnum;
+import com.sql.authentication.dto.PostDto;
 import com.sql.authentication.dto.UserRequestDto;
 import com.sql.authentication.model.*;
 import com.sql.authentication.payload.response.PostResponse;
@@ -63,6 +64,7 @@ public class UserRequestServiceImpl implements UserRequestService {
         userRequest.setPostCondition(dto.getPostCondition());
         userRequest.setMaxAmount(Long.valueOf(dto.getMaxAmount()));
         userRequest.setMinAmount(Long.valueOf(dto.getMinAmount()));
+        userRequest.setStatus("pending");
         userRequestRepository.save(userRequest);
         return userRequest;
     }
@@ -106,6 +108,28 @@ public class UserRequestServiceImpl implements UserRequestService {
 
         return postList.stream()
                 .map(data->modelMapper.map(data,PostResponse.class)).toList();
+    }
+
+    @Override
+    public String acceptPost(PostDto postDto) {
+        
+        UserRequest userRequest =  userRequestRepository.findById(postDto.getPostId()).get();
+
+        if(postDto.getStatus().equals("reject")){
+            userRequest.setStatus("pending");
+            userRequest.setApprovedBy(null);
+            userRequest.setDeliverymanName(null);
+            userRequest.setReason(null);
+        }else{
+            userRequest.setStatus("approved");
+            User user=userRepository.findByEmail(postDto.getEmail())
+                .orElseThrow(()->new RuntimeException("User not found"));
+        userRequest.setApprovedBy(user.getId());
+        userRequest.setDeliverymanName(postDto.getDeliveryMan());
+        userRequest.setReason(postDto.getReason());
+        }
+        userRequestRepository.save(userRequest);
+        return "saved";
     }
 
 }

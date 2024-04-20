@@ -2,12 +2,14 @@ package com.sql.authentication.controller.auth;
 
 import com.sql.authentication.dto.UserResponseDto;
 import com.sql.authentication.jwt.JwtUtils;
+import com.sql.authentication.model.Deliveryman;
 import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignInRequest;
 import com.sql.authentication.payload.request.SignUpRequest;
 import com.sql.authentication.payload.response.ApiResponse;
 import com.sql.authentication.payload.response.LoginResponse;
+import com.sql.authentication.repository.DeliveryRepository;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
@@ -33,6 +35,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @CrossOrigin
 @RestController
@@ -42,6 +47,8 @@ public class AuthController {
     AuthenticationManager authenticationManager;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DeliveryRepository deliveryRepository;
     @Autowired
     RoleRepository roleRepository;
     @Autowired
@@ -144,4 +151,12 @@ public class AuthController {
 
     }
     
+    @PostMapping("/store-deliveryman")
+    public String storedelivery(@RequestBody Deliveryman deliveryman) {
+        
+        deliveryRepository.save(deliveryman);
+        return "saved";
+    }
+    
+
 }
