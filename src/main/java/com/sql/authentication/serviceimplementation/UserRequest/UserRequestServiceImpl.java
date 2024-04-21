@@ -100,16 +100,23 @@ public class UserRequestServiceImpl implements UserRequestService {
 
     @Override
     public List<PostResponse> getCategoryBasedpost(String email) {
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new RuntimeException("User not found"));
-        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);  
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);
+        List<UserRequest> postList = new ArrayList<>(); // Initialize list outside if block
 
-        Optional<Ecategory> ecategory = ecategoryRepository.findById(registration.getEcategory().getId());
-        List<UserRequest> postList = userRequestRepository.findByEcategory(ecategory.get());
+        if(registration != null) {
+            Optional<Ecategory> ecategory = ecategoryRepository.findById(registration.getEcategory().getId());
+            if(ecategory.isPresent()) {
+                postList = userRequestRepository.findByEcategory(ecategory.get());
+            }
+        }
 
         return postList.stream()
-                .map(data->modelMapper.map(data,PostResponse.class)).toList();
+                .map(data -> modelMapper.map(data, PostResponse.class))
+                .toList();
     }
+
 
     @Override
     public String acceptPost(PostDto postDto) {

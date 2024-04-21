@@ -12,11 +12,11 @@ public class ShopUpdateDto {
     @NotNull(message = "Status is required")
     private String status;
     private String reason;
-    @AssertTrue
-    private boolean isReason() {
-        if (status.equalsIgnoreCase(StatusEnum.reject.getValue())) {
-            return reason != null && !reason.isEmpty(); // If either date is null, it's considered valid
-        }
-        return true;
-    }
+//    @AssertTrue
+//    private boolean isReason() {
+//        if (status.equalsIgnoreCase(StatusEnum.reject.getValue())) {
+//            return reason != null && !reason.isEmpty(); // If either date is null, it's considered valid
+//        }
+//        return true;
+//    }
 }
