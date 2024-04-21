@@ -143,6 +143,7 @@ public class AuthController {
 
     @GetMapping("getUserDetails")
     public UserResponseDto getUserDetails(@RequestParam String email) {
+        System.out.println(email);
         UserResponseDto userResponseDto = new UserResponseDto();
         User user = userRepository.findByEmail(email).get();
         userResponseDto = modelMapper.map(user, UserResponseDto.class);
@@ -159,16 +160,19 @@ public class AuthController {
     }
     
     @PostMapping("/store-deliveryman")
-    public String storedelivery(@RequestBody Deliveryman deliveryman) {
-        
-        deliveryRepository.save(deliveryman);
-        return "saved";
+    public Deliveryman storedelivery(@RequestBody Deliveryman deliveryman) {
+        return deliveryRepository.save(deliveryman);
     }
     
     @GetMapping("getDeliveryMan")
     public List<String> getDeliveryMan() {
         return deliveryRepository.findAll().stream().map(Deliveryman::getName)
         .collect(Collectors.toList());
+    }
+
+    @GetMapping("getAllDeliveryMan")
+    public List<Deliveryman> getDelivery() {
+        return deliveryRepository.findAll();
     }
     
 }
