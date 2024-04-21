@@ -4,6 +4,7 @@ import com.sql.authentication.dto.ShopRegisterDto;
 import com.sql.authentication.dto.ShopUpdateDto;
 import com.sql.authentication.model.Shop;
 import com.sql.authentication.model.ShopRegistration;
+import com.sql.authentication.model.UserRequest;
 import com.sql.authentication.payload.response.ShopDto;
 import com.sql.authentication.payload.response.ShopResponse;
 import jakarta.servlet.http.HttpSession;
@@ -18,5 +19,5 @@ public interface ShopService {
     ShopRegistration updateShopRequest(ShopUpdateDto update);
     List<ShopRegistration> shopList(HttpSession session);
 
-    String sendPostToShop(int shopId,String postname);
+    UserRequest sendPostToShop(int shopId,String postname);
 }

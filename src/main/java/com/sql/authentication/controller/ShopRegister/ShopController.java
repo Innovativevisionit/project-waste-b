@@ -53,7 +53,7 @@ public class ShopController {
             shopDto.setWebsite(website);
             shopDto.setSocialLink(socialLink);
             shopDto.setFiles(Arrays.asList(images));
-
+                System.out.println(shopDto);
             return shopService.shopRegistration(shopDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error :"+e.getMessage());
@@ -84,9 +84,11 @@ public class ShopController {
     }
 
     @PostMapping("/send-post-to-shop")
-    public String sendPostToShop(@RequestParam int shopId,@RequestParam String postname) {
-        
-        return shopService.sendPostToShop(shopId,postname);
+    public Object sendPostToShop(@RequestParam String shopId,@RequestParam String postname) {
+        double doubleValue = Double.parseDouble(shopId);
+        int intValue = (int) doubleValue;
+
+        return shopService.sendPostToShop(intValue,postname);
     }
 
 
