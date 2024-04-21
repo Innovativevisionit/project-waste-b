@@ -23,4 +23,6 @@ public class ShopDto {
     private String status;
     private String reason;
     private LocalDate approvedDate;
+
+    
 }

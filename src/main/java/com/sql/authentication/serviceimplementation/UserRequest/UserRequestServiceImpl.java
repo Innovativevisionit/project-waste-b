@@ -66,6 +66,7 @@ public class UserRequestServiceImpl implements UserRequestService {
         userRequest.setMaxAmount(Long.valueOf(dto.getMaxAmount()));
         userRequest.setMinAmount(Long.valueOf(dto.getMinAmount()));
         userRequest.setStatus("pending");
+        userRequest.setRequestedShopId(0);
         userRequestRepository.save(userRequest);
         return userRequest;
     }

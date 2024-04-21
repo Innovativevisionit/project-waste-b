@@ -45,15 +45,19 @@ public class ShopServiceImpl implements ShopService {
     private UserRequestRepository userRequestRepository;
 
     public Object shopRegistration(ShopRegisterDto data){
+
         ShopRegistration shopRegistration=new ShopRegistration();
         List<String> proofFiles = new ArrayList<>();
+
         for (MultipartFile file : data.getFiles()) {
             if (!file.isEmpty()) {
                 String fileName = fileUpload.uniqueFileName("Proof", file);
                 proofFiles.add(fileName);
             }
         }
+
         User user=userRepository.findByEmail(data.getEmail()).orElse(null);
+
         if(user==null){
             throw new RuntimeException(data.getUserId()+ "is not found.");
         }
@@ -63,8 +67,9 @@ public class ShopServiceImpl implements ShopService {
         }
         Ecategory ecategory = ecategoryRepository.findByName(data.getCategory())
             .orElseThrow(() -> new RuntimeException(data.getCategory()+ "is not found."));
-
         shopRegistration.setShopName(data.getShopName());
+        System.out.println("data");
+
         shopRegistration.setContactNo(Long.parseLong(data.getContactNo()));
         shopRegistration.setImages(proofFiles);
         shopRegistration.setUserId(user);
@@ -75,6 +80,7 @@ public class ShopServiceImpl implements ShopService {
         shopRegistration.setWebsite(data.getWebsite());
         shopRegistration.setSocialLink(data.getSocialLink());
         shopRegistration.setStatus(StatusEnum.pending.getValue());
+        
         return shopRegistrationRepository.save(shopRegistration);
 
     }
@@ -194,12 +200,14 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public String sendPostToShop(int shopId,String postname) {
+    public UserRequest sendPostToShop(int shopId,String postname) {
         
+        System.out.println("shopid "+shopId);
+        System.out.println("postname "+postname);
         UserRequest userRequest = userRequestRepository.findByName(postname);  //post name unique
 
         userRequest.setRequestedShopId(shopId);
         userRequestRepository.save(userRequest);
-        return "sent";
+        return userRequest;
     }
 }
