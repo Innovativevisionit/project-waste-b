@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserRequestServiceImpl implements UserRequestService {
+    
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -156,6 +157,21 @@ public class UserRequestServiceImpl implements UserRequestService {
         List<UserRequest> postList = userRequestRepository.findByRequestedShopId(registration.getId());
         return postList.stream()
         .map(data->modelMapper.map(data,PostResponse.class)).toList();
+    }
+
+    @Override
+    public Map<String, Long> getDashboardCount() {
+       
+        Long pendingPostCount = userRequestRepository.countByStatus("pending");
+        Long approvedPostCount = userRequestRepository.countByStatus("approved");
+        Long pendingShopCount = shopRegistrationRepository.countByStatus("Pending");
+        Long approvedShopCount = shopRegistrationRepository.countByStatus("Approved");
+        Map<String,Long> totalCounts = new HashMap<>();
+        totalCounts.put("pendingPostCount", pendingPostCount);   //pending post count
+        totalCounts.put("approvedPostCount", approvedPostCount);    //approved post count
+        totalCounts.put("pendingShopCount", pendingShopCount);  //pending shop count
+        totalCounts.put("approvedShopCount", approvedShopCount);    //approved post count
+        return totalCounts;
     }
 
 }

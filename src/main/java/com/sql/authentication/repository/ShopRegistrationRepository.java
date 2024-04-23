@@ -27,4 +27,6 @@ public interface ShopRegistrationRepository extends JpaRepository<ShopRegistrati
     
     List<ShopRegistration> findByEcategoryAndStatus(Ecategory ecategory,String status);
 
+    Long countByStatus(String status);
+
 }

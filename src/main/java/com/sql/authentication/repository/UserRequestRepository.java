@@ -26,4 +26,6 @@ public interface UserRequestRepository extends JpaRepository<UserRequest,Integer
 
     List<UserRequest> findByRequestedShopId(int shopId);
 
+    Long countByStatus(String status);
+
 }
