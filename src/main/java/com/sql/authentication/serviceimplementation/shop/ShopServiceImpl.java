@@ -102,6 +102,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     public ShopRegistration updateShopRequest(ShopUpdateDto update){
+        System.out.println(update);
         ShopRegistration registration=shopRegistrationRepository.findById(update.getId())
                 .orElseThrow(()->new RuntimeException("Id not found"));
         if(!registration.getStatus().equalsIgnoreCase(StatusEnum.pending.getValue())){
@@ -109,12 +110,12 @@ public class ShopServiceImpl implements ShopService {
         }
         if(update.getStatus().equalsIgnoreCase(StatusEnum.reject.getValue())){
             registration.setStatus(StatusEnum.reject.getValue());
-            registration.setReason(update.getReason());
+//            registration.setReason(update.getReason());
             registration.setApprovedDate(LocalDate.now());
             shopRegistrationRepository.save(registration);
         } else if (update.getStatus().equalsIgnoreCase(StatusEnum.approve.getValue())) {
             registration.setStatus(StatusEnum.approved.getValue());
-            registration.setReason(update.getReason());
+//            registration.setReason(update.getReason());
             registration.setApprovedDate(LocalDate.now());
             shopRegistrationRepository.save(registration);
             User user=userRepository.findByEmail(registration.getUserId().getEmail())
