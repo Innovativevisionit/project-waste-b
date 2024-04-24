@@ -8,6 +8,7 @@ import com.sql.authentication.repository.UserRequestRepository;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserRequestService {
     UserRequest post(UserRequestDto userRequestDto);
@@ -20,4 +21,6 @@ public interface UserRequestService {
     List<String> getPendingPostByUser(String email);
 
     List<PostResponse> getRequestedPost(String email);
+
+    Map<String,Long> getDashboardCount();
 }

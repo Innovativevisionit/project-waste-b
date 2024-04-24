@@ -91,6 +91,11 @@ public class UserRequestController {
         return requestService.getRequestedPost(email);
     }
     
+    @GetMapping("/dashboard-count")
+    public Object getDashboardCount() {
+        return requestService.getDashboardCount();
+    }
+    
 }
 
 
