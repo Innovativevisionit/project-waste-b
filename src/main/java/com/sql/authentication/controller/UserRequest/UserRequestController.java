@@ -75,7 +75,7 @@ public class UserRequestController {
     }
 
     @PostMapping("/post-accept")
-    public String acceptPost(@RequestBody PostDto postDto) {
+    public UserRequest acceptPost(@RequestBody PostDto postDto) {
         
         return requestService.acceptPost(postDto);
     }

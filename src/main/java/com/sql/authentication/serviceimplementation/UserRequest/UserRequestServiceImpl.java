@@ -120,15 +120,15 @@ public class UserRequestServiceImpl implements UserRequestService {
 
 
     @Override
-    public String acceptPost(PostDto postDto) {
+    public UserRequest acceptPost(PostDto postDto) {
         
         UserRequest userRequest =  userRequestRepository.findById(postDto.getPostId()).get();
 
         if(postDto.getStatus().equals("reject")){
-            userRequest.setStatus("pending");
+            userRequest.setStatus("rejected");
             userRequest.setApprovedBy(null);
             userRequest.setDeliverymanName(null);
-            userRequest.setReason(null);
+            userRequest.setReason(postDto.getReason());
         }else{
             userRequest.setStatus("approved");
             User user=userRepository.findByEmail(postDto.getEmail())
@@ -137,8 +137,7 @@ public class UserRequestServiceImpl implements UserRequestService {
         userRequest.setDeliverymanName(postDto.getDeliveryMan());
         userRequest.setReason(postDto.getReason());
         }
-        userRequestRepository.save(userRequest);
-        return "saved";
+        return userRequestRepository.save(userRequest);
     }
 
     @Override
@@ -160,7 +159,7 @@ public class UserRequestServiceImpl implements UserRequestService {
 
         ShopRegistration registration = shopRegistrationRepository.findByUserId(user);
 
-        List<UserRequest> postList = userRequestRepository.findByRequestedShopId(registration.getId());
+        List<UserRequest> postList = userRequestRepository.findByRequestedShopIdAndStatus(registration.getId(),"pending");
         return postList.stream()
         .map(data->modelMapper.map(data,PostResponse.class)).toList();
     }
