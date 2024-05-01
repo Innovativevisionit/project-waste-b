@@ -90,6 +90,11 @@ public class UserRequestController {
     public Object getRequestedPost(@RequestParam String email) {
         return requestService.getRequestedPost(email);
     }
+
+    @GetMapping("requested-post-user")
+    public Object getUserRequestedPost(@RequestParam String email) {
+        return requestService.getUserRequestedPost(email);
+    }
     
     @GetMapping("/dashboard-count")
     public Object getDashboardCount() {

@@ -180,4 +180,16 @@ public class UserRequestServiceImpl implements UserRequestService {
         return totalCounts;
     }
 
+    @Override
+    public List<PostResponse> getUserRequestedPost(String email) {
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new RuntimeException("User not found"));
+
+//        ShopRegistration registration = shopRegistrationRepository.findByUserId(user);
+
+        List<UserRequest> postList = userRequestRepository.findByUserIdAndStatus(user,"pending");
+        return postList.stream()
+                .map(data->modelMapper.map(data,PostResponse.class)).toList();
+    }
+
 }

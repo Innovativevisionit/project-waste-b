@@ -23,4 +23,6 @@ public interface UserRequestService {
     List<PostResponse> getRequestedPost(String email);
 
     Map<String,Long> getDashboardCount();
+
+    List<PostResponse> getUserRequestedPost(String email);
 }
